@@ -41,6 +41,7 @@
 - Notification types (message, call, system)
 - Read / unread notification state
 
+---
 
 ## 📦 Core Modules List
 
@@ -176,3 +177,264 @@
 - Profile settings
 - Privacy settings
 - Notification toggle
+
+---
+
+## 📱 MVP Scope (Version 1)
+
+### 🎯 Goal
+
+Build a **simple but fully working real-time chat app** with core messaging functionality.
+
+### 🟢 Auth Module (MVP)
+
+#### Features:
+
+- User Registration
+- User Login
+- JWT Authentication
+
+### 🟢 User Module (MVP)
+
+#### Features:
+
+- Basic profile (name, email)
+- User list (for chat start)
+
+### 🟢 Chat Module (MVP)
+
+#### Features:
+
+- 1-to-1 chat
+- Chat list
+- Create conversation
+
+#### Minimal Metadata:
+
+- lastMessage
+
+### 🟢 Message Module (MVP)
+
+#### Features:
+
+- Send/receive text messages
+- Basic message list
+- Timestamp
+
+#### Status:
+
+- sent (optional delivered)
+
+### 🟢 Real-time Module (MVP)
+
+#### Features:
+
+- Instant message delivery (Socket)
+- Basic online/offline status
+
+### 🟢 Notification Module (MVP - Optional)
+
+#### Features:
+
+- Basic push notification (new message)
+
+### 🟢 UI/UX (MVP)
+
+#### Screens:
+
+- Login Screen
+- Register Screen
+- Chat List Screen
+- Chat Screen
+
+---
+
+## 🗄️ Database Schema (MVP)
+
+## 👤 User Collection
+
+```js
+{
+  _id: ObjectId,
+  name: String,
+  email: String,
+  password: String, // hashed
+  avatar: String, // optional
+  isOnline: Boolean,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+## 💬 Chat Collection
+
+```js
+{
+  _id: ObjectId,
+  members: [ObjectId], // [user1, user2]
+  lastMessage: {
+    text: String,
+    senderId: ObjectId,
+    createdAt: Date
+  },
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+## 📨 Message Collection
+
+```js
+{
+  _id: ObjectId,
+  chatId: ObjectId,
+  senderId: ObjectId,
+  text: String,
+  status: "sent" | "delivered", // MVP
+  createdAt: Date
+}
+```
+
+---
+
+## 🔌 API Endpoints (MVP)
+
+### 🔐 Auth Routes
+
+#### Register
+
+POST /api/auth/register
+
+Body:
+
+```json
+{
+  "name": "Rimon",
+  "email": "rimon@gmail.com",
+  "password": "123456"
+}
+```
+
+#### Login
+
+POST /api/auth/login
+
+Response:
+
+```json
+{
+  "token": "JWT_TOKEN",
+  "user": {}
+}
+```
+
+### 👤 User Routes
+
+#### Get All Users
+
+GET /api/users
+
+### 💬 Chat Routes
+
+#### Create or Get Chat
+
+POST /api/chats
+
+Body:
+
+```json
+{
+  "receiverId": "USER_ID"
+}
+```
+
+#### Get User Chats
+
+GET /api/chats
+
+### 📨 Message Routes
+
+#### Send Message
+
+POST /api/messages
+
+Body:
+
+```json
+{
+  "chatId": "CHAT_ID",
+  "text": "Hello!"
+}
+```
+
+#### Get Messages
+
+GET /api/messages/:chatId
+
+---
+
+## 🔄 Socket Events (MVP)
+
+### 🟢 Connection
+
+#### connect
+
+- User connects to socket
+
+#### setup
+
+Client → Server
+
+```json
+{
+  "userId": "USER_ID"
+}
+```
+
+👉 Server stores user socket
+
+### 💬 Chat Events
+
+#### join_chat
+
+Client → Server
+
+```json
+{
+  "chatId": "CHAT_ID"
+}
+```
+
+#### send_message
+
+Client → Server
+
+```json
+{
+  "chatId": "CHAT_ID",
+  "text": "Hello",
+  "senderId": "USER_ID"
+}
+```
+
+#### receive_message
+
+Server → Client
+
+```json
+{
+  "chatId": "CHAT_ID",
+  "text": "Hello",
+  "senderId": "USER_ID"
+}
+```
+
+### 🟢 Presence Events
+
+#### user_online
+
+Server → Clients
+
+#### user_offline
+
+Server → Clients
