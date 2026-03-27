@@ -2,320 +2,177 @@
 
 ## 🎯 Project Goal
 
-Build a scalable real-time chat application with:
+**Build a scalable real-time chat application with advanced communication and interactive features:**
 
-- Text & Media messaging
+### 💬 Messaging Features
+
+- Text & Media messaging (image, video, audio, files)
 - Voice messages
-- Audio/Video calls
-- Live location sharing
+- Message reactions (like, emoji)
+- Reply & forward messages
+- Edit / delete messages (soft delete)
+- Message search & filtering
 
-## 1. Core Modules (High-Level Architecture)
+### 📞 Communication Features
 
-```
-Auth Module
-User Module
-Chat Module
-Media Module
-Real-time Module
-Call Module
-Location Module
-Notification Module
-Settings Module
-```
+- Audio calls
+- Video calls
 
----
+### 📍 Smart & Interactive Features
 
-# 🔐 2. Auth Module
+- Typing indicators
+- Online / Offline status
+- Last seen tracking
+- Read receipts (sent → delivered → seen)
+- Live location sharing (real-time tracking)
 
-### Features:
+### 👥 Social Features
 
-- Signup / Login
-- JWT Authentication
+- Group chat
+- User mentions (@username)
+- User profiles with status/bio
+- Block / report users
+
+### 🔔 Engagement Features
+
+- Push notifications (real-time)
+- In-app notifications
+- Message preview
+- Notification types (message, call, system)
+- Read / unread notification state
+
+
+## 📦 Core Modules List
+
+### 🔐 Auth Module
+
+**Purpose:** User authentication & access control
+
+#### Features:
+
+- User registration
+- User login
+- JWT authentication
 - Logout
 
-### Optional:
+### 👤 User Module
 
-- Google Login
-- OTP Verification
+**Purpose:** User profile & identity management
 
----
+#### Features:
 
-# 👤 3. User Module
+- View/update profile (name, bio, image)
+- User search
+- Block / report user
+- User session management (active devices, login sessions)
 
-### Features:
+### 💬 Chat Module (Core)
 
-- Profile (name, image, bio)
-- Search users
-- Contact/Friend system
+**Purpose:** Chat system & conversation management
 
-### Optional:
+#### Features:
 
-- Block / Report user
+- 1-to-1 chat
+- Group chat
+- Chat list
+- Create/delete conversation
+- Chat metadata:
+  - lastMessage
+  - unreadCount
+  - pinned / muted / archived (optional)
 
----
+### 📨 Message Module
 
-# 💬 4. Chat Module (Core)
+**Purpose:** Message handling & operations
 
-### Features:
+#### Features:
 
-- 1-to-1 Chat
-- Group Chat
-- Chat List
+- Send/receive messages
+- Message types (text, media, audio, location)
+- Reply / forward messages
+- Edit messages
+- Soft delete messages
+- Message search & filtering
+- Message reactions (emoji)
 
-### Message Types:
+#### Message Status Flow:
 
-- Text
-- Emoji
+- sent → delivered → seen
 
-### Optional:
+#### Additional Flags:
 
-- Edit/Delete message
-- Reply system
+- isEdited
+- isForwarded
 
----
+### 🔄 Real-time Module
 
-# 🔄 5. Real-time Module (Socket-Based)
+**Purpose:** Live communication (Socket-based)
 
-### Features:
+#### Features:
 
 - Instant message delivery
-- Typing indicator
-- Seen / Delivered status
-- Online / Offline status
+- Typing indicators
+- Online / offline status
+- Last seen tracking
+- Read receipts
 
----
+#### Event-Based Structure:
 
-# 📁 6. Media Module
+- message events
+- typing events
+- presence events
 
-### Features:
+### 📁 Media Module
+
+**Purpose:** File & media management
+
+#### Features:
 
 - Image upload
 - Video upload
-- File sharing
-- Preview before sending
+- Audio/file sharing
+- Media preview
+- Media compression (optimization)
 
-### Optional:
+### 🎙️ Voice Module
 
-- Compression
-- Auto-download control
+**Purpose:** Voice message system
 
----
-
-# 🎙️ 7. Voice Module
-
-### Features:
+#### Features:
 
 - Record voice message
-- Send & play audio
+- Send voice message
+- Audio playback
 
-### Optional:
+### 📞 Call Module
 
-- Waveform UI
-- Playback speed control
+**Purpose:** Real-time communication (calls)
 
----
-
-# 📞 8. Call Module (Advanced)
-
-### Features:
+#### Features:
 
 - Audio call
 - Video call
-- Accept / Reject call
+- Accept/reject calls
+- Call status handling
 
-### Optional:
+### 🔔 Notification Module
 
-- Group calls
-- Screen sharing
+**Purpose:** User engagement & alerts
 
----
+#### Features:
 
-# 📍 9. Location Module
+- Push notifications (new message)
+- In-app notifications
+- Message preview alerts
+- Notification types (message/call/system)
+- Read/unread state
 
-### Features:
+### ⚙️ Settings Module
 
-- Send current location
-- Live location sharing
-- Map preview
+**Purpose:** User preferences & control
 
-### Optional:
+#### Features:
 
-- Duration control (15 min / 1 hour)
-- Route tracking
-
----
-
-# 🔔 10. Notification Module
-
-### Features:
-
-- Push notification (new messages)
-- Background message handling
-
----
-
-# ⚙️ 11. Settings Module
-
-### Features:
-
-- Profile edit
+- Profile settings
 - Privacy settings
 - Notification toggle
-
----
-
-# 🧠 12. Admin Module (Optional)
-
-### Features:
-
-- User management
-- Reports handling
-- Basic analytics
-
----
-
-# 🗂️ 13. Database Design (Flexible)
-
-### Collections:
-
-```
-Users
-Chats
-Messages
-Calls
-Locations
-```
-
-### Notes:
-
-- Use a `messageType` field:
-  - text / image / video / audio / location
-
----
-
-# 📂 14. Frontend Folder Structure
-
-```
-src/
- ├── modules/
- │    ├── auth/
- │    ├── chat/
- │    ├── user/
- │    ├── call/
- │    └── location/
- ├── components/
- ├── navigation/
- ├── services/
- └── utils/
-```
-
----
-
-# 🌐 15. Backend Structure
-
-```
-server/
- ├── modules/
- │    ├── auth/
- │    ├── chat/
- │    ├── message/
- │    ├── call/
- │    └── location/
- ├── sockets/
- ├── middleware/
- └── config/
-```
-
----
-
-# 🚀 16. Development Phases
-
-## 🟢 Phase 1 (MVP)
-
-- Authentication
-- Text Chat
-- Basic UI
-
----
-
-## 🟡 Phase 2
-
-- Real-time (Socket)
-- Chat list
-- User search
-
----
-
-## 🔵 Phase 3
-
-- Media (image/video/file)
-- Notifications
-
----
-
-## 🔴 Phase 4
-
-- Voice messages
-- Live location
-
----
-
-## 🟣 Phase 5 (Advanced)
-
-- Audio/Video calls
-- Performance optimization
-
----
-
-# 🔄 17. Future Scalability Options
-
-- AI chatbot integration
-- End-to-end encryption
-- Stories / Status system
-- Advanced analytics
-
----
-
-# 🎯 18. MVP Scope (Start Here)
-
-```
-Auth
-1-to-1 Chat
-Real-time Messaging
-Basic UI
-```
-
----
-
-# 🧠 19. Development Strategy
-
-```
-Module → Feature → Test → Iterate → Expand
-```
-
-### Rules:
-
-- ❌ Don’t build everything at once
-- ✅ Build step-by-step
-- ✅ Complete each module before moving forward
-
----
-
-# 📌 Notes
-
-- Keep architecture modular (easy to modify later)
-- Use environment variables for config
-- Always test real-time features thoroughly
-- Focus on performance for media & calls
-
----
-
-# 🚀 Next Steps
-
-- Choose backend approach:
-  - Firebase (fast & simple)
-  - Node.js + Socket (full control)
-
-- Define MVP scope clearly before coding
-
----
