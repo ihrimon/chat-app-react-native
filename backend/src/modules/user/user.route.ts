@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { protect } from '../../middlewares/auth.middleware';
+import isAuth from '../../middlewares/auth.middleware';
 import { getAllUsers, getProfile } from './user.controller';
 
 const router = Router();
 
-router.get('/', protect, getAllUsers);
-router.get('/profile', protect, getProfile);
+router.get('/', isAuth('admin'), getAllUsers);
+router.get('/profile', isAuth('user', 'admin'), getProfile);
 
 export default router;

@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthRequest } from '../../middlewares/auth.middleware';
 import Chat from './chat.model';
+import { AuthRequest } from '../../types';
 
 // Create or get existing 1-to-1 chat
 export const createOrGetChat = async (

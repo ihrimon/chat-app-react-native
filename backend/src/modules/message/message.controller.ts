@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthRequest } from '../../middlewares/auth.middleware';
 import Chat from '../chat/chat.model';
 import Message from './message.model';
+import { AuthRequest } from '../../types';
 
 export const sendMessage = async (
   req: AuthRequest,

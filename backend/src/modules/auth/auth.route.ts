@@ -1,12 +1,13 @@
 import { Router } from 'express';
-import { protect } from '../../middlewares/auth.middleware';
 import * as authController from './auth.controller';
-import { validateLogin, validateRegister } from './auth.validation';
+import { validateRegister, validateLogin } from './auth.validation';
+import isAuth from '../../middlewares/auth.middleware';
 
 const router = Router();
 
 router.post('/register', validateRegister, authController.register);
 router.post('/login', validateLogin, authController.login);
-router.post('/logout', protect, authController.logout);
+router.post('/refresh-token', authController.refreshToken);
+router.post('/logout', isAuth(), authController.logout);
 
 export default router;

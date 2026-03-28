@@ -1,45 +1,67 @@
-import { Request, Response } from 'express';
+import catchAsync from '../../utils/catch-async';
+import cookieOptions from '../../utils/cookie-option';
 import * as authService from './auth.service';
 
-export const register = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email, password } = req.body;
-    const { user, token } = await authService.registerUser(
-      name,
-      email,
-      password,
-    );
+/* ────── Register ────── */
+export const register = catchAsync(async (req, res) => {
+  const { name, email, password } = req.body;
+  const { user, accessToken, refreshToken } = await authService.registerUser(
+    name,
+    email,
+    password,
+  );
 
-    res.status(201).json({
-      success: true,
-      message: 'User registered successfully',
-      token,
-      user,
-    });
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Registration failed';
-    res.status(400).json({ success: false, message });
-  }
-};
+  // refreshToken → HTTP-only cookie
+  res.cookie('refresh-token', refreshToken, cookieOptions);
 
-export const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
-    const { user, token } = await authService.loginUser(email, password);
+  res.status(201).json({
+    success: true,
+    message: 'User registered successfully',
+    accessToken, // store in client(memory/state)
+    data: user,
+  });
+});
 
-    res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      token,
-      user,
-    });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Login failed';
-    res.status(401).json({ success: false, message });
-  }
-};
+/* ────── Login ────── */
+export const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  const { user, accessToken, refreshToken } = await authService.loginUser(
+    email,
+    password,
+  );
 
-export const logout = async (_req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ success: true, message: 'Logged out successfully' });
-};
+  // refreshToken → HTTP-only cookie
+  res.cookie('refresh-token', refreshToken, cookieOptions);
+
+  res.status(200).json({
+    success: true,
+    message: 'Login successful',
+    accessToken, // store in client(memory/state)
+    data: user,
+  });
+});
+
+/* ────── Refresh Token ────── */
+export const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const { accessToken } = await authService.refreshAccessToken(refreshToken);
+
+  res.status(200).json({
+    success: true,
+    message: 'Token refreshed successfully',
+    accessToken,
+    data: null,
+  });
+});
+
+/* ────── Logout ────── */
+export const logout = catchAsync(async (_req, res) => {
+  // Cookie clear → refreshToken invalid
+  res.clearCookie('refresh-token', cookieOptions);
+
+  res.status(200).json({
+    success: true,
+    message: 'Logged out successfully',
+    data: null,
+  });
+});

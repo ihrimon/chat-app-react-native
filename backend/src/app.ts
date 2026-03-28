@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import notFound from './middlewares/not-found.middleware';
@@ -12,6 +13,7 @@ const app: Application = express();
 app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 /* ────── Routes ────── */
 app.use('/api/auth', authRoutes);
@@ -24,7 +26,7 @@ app.get('/', (_req: Request, res: Response) => {
   res.json({ success: true, message: 'Real Time Chat App API is running' });
 });
 
-/* ────── Not Found (404) Handler ────── */
+/* ────── Not Found (404) Middleware ────── */
 app.use(notFound);
 
 export default app;
