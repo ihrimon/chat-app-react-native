@@ -438,3 +438,12 @@ Server → Clients
 #### user_offline
 
 Server → Clients
+
+## Recommended Stack (MERN + Realtime)
+
+Frontend : React Native
+Backend: Node.js + Express.js
+Database: MongoDB,
+Realtime: Socket.IO
+Auth: JWT
+Tools: Postman, Mongoose, Typescript
