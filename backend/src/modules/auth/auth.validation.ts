@@ -1,42 +1,42 @@
-import { Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
 
-export const validateRegister = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const { name, email, password } = req.body;
+export const registerSchema = z.object({
+  name: z
+    .string({ error: 'Name is required' })
+    .trim()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must not exceed 50 characters'),
 
-  if (!name || !email || !password) {
-    res.status(400).json({ message: 'All fields are required' });
-    return;
-  }
+  email: z
+    .string({ error: 'Email is required' })
+    .trim()
+    .toLowerCase()
+    .email('Invalid email format'),
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    res.status(400).json({ message: 'Invalid email format' });
-    return;
-  }
+  password: z
+    .string({ error: 'Password is required' })
+    .min(6, 'Password must be at least 6 characters')
+    .max(32, 'Password must not exceed 32 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character',
+    ),
 
-  if (password.length < 6) {
-    res.status(400).json({ message: 'Password must be at least 6 characters' });
-    return;
-  }
+  avatar: z.string().url('Avatar must be a valid URL').optional(),
+});
 
-  next();
-};
+export const loginSchema = z.object({
+  email: z
+    .string({ error: 'Email is required' })
+    .trim()
+    .toLowerCase()
+    .email('Invalid email format'),
 
-export const validateLogin = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const { email, password } = req.body;
+  password: z
+    .string({ error: 'Password is required' })
+    .min(1, 'Password is required'),
+});
 
-  if (!email || !password) {
-    res.status(400).json({ message: 'Email and password are required' });
-    return;
-  }
-
-  next();
-};

@@ -1,3 +1,4 @@
+import { AppError } from '../../utils/app-error.utils';
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -12,7 +13,9 @@ export const registerUser = async (
   password: string,
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
   const existingUser = await User.findOne({ email });
-  if (existingUser) throw new Error('Email already in use');
+  if (existingUser) {
+    throw new AppError('Email already in use', 409);
+  }
 
   const user = await User.create({ name, email, password });
 
@@ -23,7 +26,6 @@ export const registerUser = async (
   };
 
   const accessToken = generateAccessToken(jwtPayload);
-
   const refreshToken = generateRefreshToken(jwtPayload);
 
   return { user, accessToken, refreshToken };
@@ -35,10 +37,10 @@ export const loginUser = async (
   password: string,
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
   const user = await User.findOne({ email }).select('+password');
-  if (!user) throw new Error('Invalid email or password');
+  if (!user) throw new AppError('Invalid email or password', 401);
 
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw new Error('Invalid email or password');
+  if (!isMatch) throw new AppError('Invalid email or password', 401);
 
   const jwtPayload = {
     id: user._id.toString(),
@@ -57,11 +59,11 @@ export const loginUser = async (
 export const refreshAccessToken = async (
   refreshToken: string,
 ): Promise<{ accessToken: string }> => {
-  if (!refreshToken) throw new Error('Refresh token not provided');
+  if (!refreshToken) throw new AppError('Refresh token not provided', 400);
 
   const decoded = verifyRefreshToken(refreshToken);
   const user = await User.findById(decoded.decoded?.id);
-  if (!user) throw new Error('User not found');
+  if (!user) throw new AppError('User not found', 404);
 
   const jwtPayload = {
     id: user._id.toString(),

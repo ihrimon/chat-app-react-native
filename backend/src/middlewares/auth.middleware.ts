@@ -1,4 +1,5 @@
 import { AuthRequest, TUserRole } from '../types';
+import { ApiResponse } from '../utils/api-response.utils';
 import catchAsync from '../utils/catch-async.utils';
 import { verifyAccessToken } from '../utils/token.utils';
 
@@ -7,7 +8,7 @@ export const authenticate = catchAsync<AuthRequest>(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({ success: false, message: 'No token provided' });
+    ApiResponse.unauthorized(res, 'No token provided');
     return;
   }
 
@@ -16,19 +17,12 @@ export const authenticate = catchAsync<AuthRequest>(async (req, res, next) => {
   const { valid, expired, decoded } = verifyAccessToken(token);
 
   if (expired) {
-    res.status(401).json({
-      success: false,
-      message: 'Access token expired',
-      code: 'TOKEN_EXPIRED',
-    });
+    ApiResponse.unauthorized(res, 'Access token expired');
     return;
   }
 
   if (!valid) {
-    res.status(403).json({
-      success: false,
-      message: 'Invalid token',
-    });
+    ApiResponse.unauthorized(res, 'Invalid token');
     return;
   }
 
@@ -40,18 +34,12 @@ export const authenticate = catchAsync<AuthRequest>(async (req, res, next) => {
 export const authorize = (...roles: TUserRole[]) => {
   return catchAsync<AuthRequest>(async (req, res, next) => {
     if (!req.user) {
-      res.status(401).json({
-        success: false,
-        message: 'Unauthorized',
-      });
+      ApiResponse.unauthorized(res, 'Unauthorized Access');
       return;
     }
 
     if (!roles.includes(req.user.role)) {
-      res.status(403).json({
-        success: false,
-        message: 'You do not have permission',
-      });
+      ApiResponse.forbidden(res, 'You do not have permission');
       return;
     }
 

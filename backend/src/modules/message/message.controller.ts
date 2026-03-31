@@ -1,54 +1,34 @@
-import { Response } from 'express';
+import { AuthRequest } from '../../types';
+import { ApiResponse } from '../../utils/api-response.utils';
+import catchAsync from '../../utils/catch-async.utils';
 import Chat from '../chat/chat.model';
 import Message from './message.model';
-import { AuthRequest } from '../../types';
-
 
 /* ======== Send Message ======== */
-export const sendMessage = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { chatId, text } = req.body;
-    const senderId = req.user?.id;
+export const sendMessage = catchAsync<AuthRequest>(async (req, res) => {
+  const { chatId, text } = req.body;
+  const senderId = req.user?.id;
 
-    if (!chatId || !text) {
-      res
-        .status(400)
-        .json({ success: false, message: 'chatId and text are required' });
-      return;
-    }
+  if (!chatId || !text)
+    ApiResponse.badRequest(res, 'chatId and text are required');
 
-    const message = await Message.create({ chatId, senderId, text });
+  const message = await Message.create({ chatId, senderId, text });
 
-    // Update lastMessage in chat
-    await Chat.findByIdAndUpdate(chatId, {
-      lastMessage: { text, senderId, createdAt: new Date() },
-    });
+  // Update lastMessage in chat
+  await Chat.findByIdAndUpdate(chatId, {
+    lastMessage: { text, senderId, createdAt: new Date() },
+  });
 
-    res.status(201).json({ success: true, message });
-  } catch {
-    res.status(500).json({ success: false, message: 'Failed to send message' });
-  }
-};
+  ApiResponse.created(res, 'Message sent successfully', message);
+});
 
 /* ======== Get Messages ======== */
-export const getMessages = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { chatId } = req.params;
+export const getMessages = catchAsync<AuthRequest>(async (req, res) => {
+  const { chatId } = req.params;
 
-    const messages = await Message.find({ chatId })
-      .populate('senderId', 'name avatar')
-      .sort({ createdAt: 1 });
+  const messages = await Message.find({ chatId })
+    .populate('senderId', 'name avatar')
+    .sort({ createdAt: 1 });
 
-    res.status(200).json({ success: true, messages });
-  } catch {
-    res
-      .status(500)
-      .json({ success: false, message: 'Failed to fetch messages' });
-  }
-};
+  ApiResponse.success(res, 'Messages retrieved successfully', messages);
+});

@@ -1,14 +1,14 @@
 import http from 'http';
 import { Server } from 'socket.io';
+import app from './app';
 import connectDB from './config/database.config';
 import envConfig from './config/env.config';
-import app from './app';
 import { initSocket } from './sockets/socket';
 
-/* ────── Create HTTP Server ────── */
+/* ======== Create HTTP Server ======== */
 const server = http.createServer(app);
 
-/* ────── Socket.IO Setup ────── */
+/* ======== Socket.IO Setup ======== */
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -18,7 +18,7 @@ const io = new Server(server, {
 
 initSocket(io);
 
-/* ────── Start Server ────── */
+/* ======== Start Server ======== */
 const start = async (): Promise<void> => {
   await connectDB();
 

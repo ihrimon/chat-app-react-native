@@ -7,4 +7,4 @@ const router = Router();
 router.post('/', authenticate, createOrGetChat);
 router.get('/', authenticate, getUserChats);
 
-export default router;
+export const chatRoutes = router;
