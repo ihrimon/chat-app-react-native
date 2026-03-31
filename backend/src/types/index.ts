@@ -2,6 +2,18 @@ import { Request } from 'express';
 
 export type TUserRole = 'user' | 'admin';
 
+export type TTokenPayload = {
+  id: string;
+  role: TUserRole;
+  email: string;
+};
+
 export interface AuthRequest extends Request {
-  user?: { id: string; role: TUserRole; email: string };
+  user?: TTokenPayload;
 }
+
+export type TVerifyTokenResult = {
+  valid: boolean;
+  expired: boolean;
+  decoded: TTokenPayload | null;
+};

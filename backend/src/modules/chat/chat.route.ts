@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import isAuth from '../../middlewares/auth.middleware';
 import { createOrGetChat, getUserChats } from './chat.controller';
+import { authenticate } from '../../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/', isAuth(), createOrGetChat);
-router.get('/', isAuth(), getUserChats);
+router.post('/', authenticate, createOrGetChat);
+router.get('/', authenticate, getUserChats);
 
 export default router;

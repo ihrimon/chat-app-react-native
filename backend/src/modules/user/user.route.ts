@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import isAuth from '../../middlewares/auth.middleware';
+import { authenticate, authorize } from '../../middlewares/auth.middleware';
 import { getAllUsers, getProfile } from './user.controller';
 
 const router = Router();
 
-router.get('/', isAuth('admin'), getAllUsers);
-router.get('/profile', isAuth('user', 'admin'), getProfile);
+router.get('/profile', authenticate, getProfile);
+
+// Only admin can access the list of all users
+router.get('/', authenticate, authorize('admin'), getAllUsers);
 
 export default router;

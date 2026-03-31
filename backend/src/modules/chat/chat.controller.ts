@@ -2,7 +2,7 @@ import { Response } from 'express';
 import Chat from './chat.model';
 import { AuthRequest } from '../../types';
 
-// Create or get existing 1-to-1 chat
+/* ======== Create or Get Chat ======== */
 export const createOrGetChat = async (
   req: AuthRequest,
   res: Response,
@@ -36,7 +36,7 @@ export const createOrGetChat = async (
   }
 };
 
-// Get all chats for logged-in user
+/* ======== Get User Chats ======== */
 export const getUserChats = async (
   req: AuthRequest,
   res: Response,

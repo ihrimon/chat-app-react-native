@@ -1,11 +1,11 @@
-import catchAsync from '../../utils/catch-async';
-import cookieOptions from '../../utils/cookie-option';
+import { cookieOptions } from '../../config/env.config';
+import catchAsync from '../../utils/catch-async.utils';
 import * as authService from './auth.service';
 
-/* ────── Register ────── */
+/* ======== Register ======== */
 export const register = catchAsync(async (req, res) => {
   const { name, email, password } = req.body;
-  const { user, accessToken, refreshToken } = await authService.registerUser(
+  const { user, refreshToken } = await authService.registerUser(
     name,
     email,
     password,
@@ -17,15 +17,14 @@ export const register = catchAsync(async (req, res) => {
   res.status(201).json({
     success: true,
     message: 'User registered successfully',
-    accessToken, // store in client(memory/state)
     data: user,
   });
 });
 
-/* ────── Login ────── */
+/* ======== Login ======== */
 export const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  const { user, accessToken, refreshToken } = await authService.loginUser(
+  const { user, refreshToken } = await authService.loginUser(
     email,
     password,
   );
@@ -36,12 +35,11 @@ export const login = catchAsync(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Login successful',
-    accessToken, // store in client(memory/state)
     data: user,
   });
 });
 
-/* ────── Refresh Token ────── */
+/* ======== Refresh Token ======== */
 export const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   const { accessToken } = await authService.refreshAccessToken(refreshToken);
@@ -49,12 +47,11 @@ export const refreshToken = catchAsync(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Token refreshed successfully',
-    accessToken,
     data: null,
   });
 });
 
-/* ────── Logout ────── */
+/* ======== Logout ======== */
 export const logout = catchAsync(async (_req, res) => {
   // Cookie clear → refreshToken invalid
   res.clearCookie('refresh-token', cookieOptions);

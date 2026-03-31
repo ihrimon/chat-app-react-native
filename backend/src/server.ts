@@ -1,6 +1,6 @@
 import http from 'http';
 import { Server } from 'socket.io';
-import connectDB from './config/database';
+import connectDB from './config/database.config';
 import envConfig from './config/env.config';
 import app from './app';
 import { initSocket } from './sockets/socket';

@@ -3,6 +3,8 @@ import Chat from '../chat/chat.model';
 import Message from './message.model';
 import { AuthRequest } from '../../types';
 
+
+/* ======== Send Message ======== */
 export const sendMessage = async (
   req: AuthRequest,
   res: Response,
@@ -31,6 +33,7 @@ export const sendMessage = async (
   }
 };
 
+/* ======== Get Messages ======== */
 export const getMessages = async (
   req: AuthRequest,
   res: Response,
