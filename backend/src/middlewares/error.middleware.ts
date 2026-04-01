@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { TFieldError } from '../types/response.types';
 import { AppError } from '../utils/app-error.utils';
 
+/* ======== Global Error Handler ======== */
 export const globalErrorHandler = (
   err: Error,
   _req: Request,

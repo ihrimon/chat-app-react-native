@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { TFieldError } from '../types/response.types';
 import { ApiResponse } from '../utils/api-response.utils';
 
+/* ======== Validation Middleware ======== */
 const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body);

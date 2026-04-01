@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import envConfig from './env.config';
 
+/* ======== Database Connection ======== */
 const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(envConfig.database_uri as string);
