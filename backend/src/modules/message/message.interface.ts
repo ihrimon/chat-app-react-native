@@ -1,10 +1,11 @@
-import mongoose, { Document } from 'mongoose';
-import { MessageStatus } from '../../types';
+import { Types } from 'mongoose';
+import { TMessageStatus } from '../../types';
 
-export interface IMessage extends Document {
-  chatId: mongoose.Types.ObjectId;
-  senderId: mongoose.Types.ObjectId;
+export interface IMessage {
+  chatId: Types.ObjectId;
+  senderId: Types.ObjectId;
   text: string;
-  status: MessageStatus;
+  status: TMessageStatus;
   createdAt: Date;
+  updatedAt: Date;
 }

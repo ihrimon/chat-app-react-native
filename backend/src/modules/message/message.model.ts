@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { IMessage } from './message.interface';
+import { TMessageStatus } from '../../types';
 
 const messageSchema = new Schema<IMessage>(
   {
@@ -8,7 +9,7 @@ const messageSchema = new Schema<IMessage>(
     text: { type: String, required: true, trim: true },
     status: {
       type: String,
-      enum: ['sent', 'delivered', 'seen'],
+      enum: ['sent', 'delivered'] as TMessageStatus[],
       default: 'sent',
     },
   },

@@ -1,34 +1,22 @@
 import { AuthRequest } from '../../types';
 import { ApiResponse } from '../../utils/api-response.utils';
 import catchAsync from '../../utils/catch-async.utils';
-import Chat from '../chat/chat.model';
-import Message from './message.model';
+import * as messageService from './message.service';
 
 /* ======== Send Message ======== */
 export const sendMessage = catchAsync<AuthRequest>(async (req, res) => {
   const { chatId, text } = req.body;
-  const senderId = req.user?.id;
+  const senderId = req.user!.id;
 
-  if (!chatId || !text)
-    ApiResponse.badRequest(res, 'chatId and text are required');
-
-  const message = await Message.create({ chatId, senderId, text });
-
-  // Update lastMessage in chat
-  await Chat.findByIdAndUpdate(chatId, {
-    lastMessage: { text, senderId, createdAt: new Date() },
-  });
-
+  const message = await messageService.sendMessage(chatId, senderId, text);
   ApiResponse.created(res, 'Message sent successfully', message);
 });
 
 /* ======== Get Messages ======== */
 export const getMessages = catchAsync<AuthRequest>(async (req, res) => {
   const { chatId } = req.params;
+  const senderId = req.user!.id;
 
-  const messages = await Message.find({ chatId })
-    .populate('senderId', 'name avatar')
-    .sort({ createdAt: 1 });
-
+  const messages = await messageService.getMessages(chatId, senderId);
   ApiResponse.success(res, 'Messages retrieved successfully', messages);
 });
