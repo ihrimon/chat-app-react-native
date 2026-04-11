@@ -37,7 +37,7 @@ export const loginUser = async (
   password: string,
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
   const user = await User.findOne({ email }).select('+password');
-  if (!user) throw new AppError('Invalid email or password', 401);
+  if (!user) throw new AppError('User not found', 401);
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw new AppError('Invalid email or password', 401);

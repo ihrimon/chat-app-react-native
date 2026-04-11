@@ -2,6 +2,8 @@ import { Request } from 'express';
 
 export type TUserRole = 'user' | 'admin';
 
+export type MessageStatus = 'sent' | 'delivered' | 'seen';
+
 export type TTokenPayload = {
   id: string;
   role: TUserRole;

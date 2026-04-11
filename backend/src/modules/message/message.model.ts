@@ -1,14 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-
-export type MessageStatus = 'sent' | 'delivered' | 'seen';
-
-export interface IMessage extends Document {
-  chatId: mongoose.Types.ObjectId;
-  senderId: mongoose.Types.ObjectId;
-  text: string;
-  status: MessageStatus;
-  createdAt: Date;
-}
+import { IMessage } from './message.interface';
 
 const messageSchema = new Schema<IMessage>(
   {
