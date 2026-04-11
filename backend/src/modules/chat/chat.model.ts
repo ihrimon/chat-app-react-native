@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { IChat } from './chat.interface';
 
 const chatSchema = new Schema<IChat>(
@@ -11,7 +11,10 @@ const chatSchema = new Schema<IChat>(
       },
     ],
     lastMessage: {
-      text: { type: String },
+      text: {
+        type: String,
+        default: 'No messages yet',
+      },
       senderId: { type: Schema.Types.ObjectId, ref: 'User' },
       createdAt: { type: Date },
     },

@@ -4,7 +4,7 @@ import chatModel from './chat.model';
 
 const memberPopulate = {
   path: 'members',
-  select: 'name email avatar isOnline',
+  select: 'name avatar isOnline',
 };
 
 /* ======== Create or Get 1-to-1 Chat ======== */
