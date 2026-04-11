@@ -4,7 +4,8 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
 } from '../../utils/token.utils';
-import User, { IUser } from './auth.model';
+import { IUser } from './auth.interface';
+import userModel from './auth.model';
 
 /* ======== Register User ======== */
 export const registerUser = async (
@@ -12,12 +13,12 @@ export const registerUser = async (
   email: string,
   password: string,
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-  const existingUser = await User.findOne({ email });
+  const existingUser = await userModel.findOne({ email });
   if (existingUser) {
     throw new AppError('Email already in use', 409);
   }
 
-  const user = await User.create({ name, email, password });
+  const user = await userModel.create({ name, email, password });
 
   const jwtPayload = {
     id: user._id.toString(),
@@ -36,7 +37,7 @@ export const loginUser = async (
   email: string,
   password: string,
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-  const user = await User.findOne({ email }).select('+password');
+  const user = await userModel.findOne({ email }).select('+password');
   if (!user) throw new AppError('User not found', 401);
 
   const isMatch = await user.comparePassword(password);
@@ -62,7 +63,7 @@ export const refreshAccessToken = async (
   if (!refreshToken) throw new AppError('Refresh token not provided', 400);
 
   const decoded = verifyRefreshToken(refreshToken);
-  const user = await User.findById(decoded.decoded?.id);
+  const user = await userModel.findById(decoded.decoded?.id);
   if (!user) throw new AppError('User not found', 404);
 
   const jwtPayload = {

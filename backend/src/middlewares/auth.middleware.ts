@@ -7,7 +7,7 @@ import { verifyAccessToken } from '../utils/token.utils';
 export const authenticate = catchAsync<AuthRequest>(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
     ApiResponse.unauthorized(res, 'No token provided');
     return;
   }
@@ -34,7 +34,10 @@ export const authenticate = catchAsync<AuthRequest>(async (req, res, next) => {
 export const authorize = (...roles: TUserRole[]) => {
   return catchAsync<AuthRequest>(async (req, res, next) => {
     if (!req.user) {
-      ApiResponse.unauthorized(res, 'Unauthorized Access');
+      ApiResponse.unauthorized(
+        res,
+        'Unauthorized Access from authorize middleware',
+      );
       return;
     }
 

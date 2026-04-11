@@ -6,31 +6,40 @@ import * as authService from './auth.service';
 /* ======== Register ======== */
 export const register = catchAsync(async (req, res) => {
   const { name, email, password } = req.body;
-  const { user, refreshToken } = await authService.registerUser(
+  const { user, accessToken, refreshToken } = await authService.registerUser(
     name,
     email,
     password,
   );
 
   res.cookie('refresh-token', refreshToken, cookieOptions);
-  ApiResponse.created(res, 'User registered successfully', user);
+  ApiResponse.created(res, 'User registered successfully', {
+    user,
+    accessToken,
+  });
 });
 
 /* ======== Login ======== */
 export const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
-  const { user, refreshToken } = await authService.loginUser(email, password);
+  const { user, accessToken, refreshToken } = await authService.loginUser(
+    email,
+    password,
+  );
 
   res.cookie('refresh-token', refreshToken, cookieOptions);
-  ApiResponse.success(res, 'Login successful', user);
+  ApiResponse.success(res, 'Login successful', { user, accessToken });
 });
 
 /* ======== Refresh Token ======== */
 export const refreshToken = catchAsync(async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const refreshToken = req.cookies['refresh-token'];
+
   const { accessToken } = await authService.refreshAccessToken(refreshToken);
 
-  ApiResponse.success(res, 'Token refreshed successfully', { accessToken });
+  ApiResponse.success(res, 'Token refreshed successfully', {
+    accessToken,
+  });
 });
 
 /* ======== Logout ======== */
