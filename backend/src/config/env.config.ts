@@ -25,5 +25,10 @@ export const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict' as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
+
+/* ======== Cookie Options with max age ======== */
+export const refreshTokenCookieOptions = {
+  ...cookieOptions,
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 };

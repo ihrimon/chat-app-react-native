@@ -1,5 +1,9 @@
-import { cookieOptions } from '../../config/env.config';
+import {
+  cookieOptions,
+  refreshTokenCookieOptions,
+} from '../../config/env.config';
 import { ApiResponse } from '../../utils/api-response.utils';
+import { AppError } from '../../utils/app-error.utils';
 import catchAsync from '../../utils/catch-async.utils';
 import * as authService from './auth.service';
 
@@ -12,7 +16,7 @@ export const register = catchAsync(async (req, res) => {
     password,
   );
 
-  res.cookie('refresh-token', refreshToken, cookieOptions);
+  res.cookie('refresh-token', refreshToken, refreshTokenCookieOptions);
   ApiResponse.created(res, 'User registered successfully', {
     user,
     accessToken,
@@ -27,7 +31,7 @@ export const login = catchAsync(async (req, res) => {
     password,
   );
 
-  res.cookie('refresh-token', refreshToken, cookieOptions);
+  res.cookie('refresh-token', refreshToken, refreshTokenCookieOptions);
   ApiResponse.success(res, 'Login successful', { user, accessToken });
 });
 
@@ -43,7 +47,14 @@ export const refreshToken = catchAsync(async (req, res) => {
 });
 
 /* ======== Logout ======== */
-export const logout = catchAsync(async (_req, res) => {
+export const logout = catchAsync(async (req, res) => {
+  const refreshTokenValue = req.cookies['refresh-token'];
+
+  // if cookie is not present, it means user is already logged out
+  if (!refreshTokenValue) {
+    throw new AppError('You are already logged out', 400);
+  }
+
   res.clearCookie('refresh-token', cookieOptions);
   ApiResponse.success(res, 'Logged out successfully');
 });
