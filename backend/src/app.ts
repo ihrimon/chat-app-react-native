@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import morgan from 'morgan';
 import { Server } from 'socket.io';
 import {
   globalErrorHandler,
@@ -16,6 +17,22 @@ const createApp = (io: Server): Application => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
+  app.use(
+    morgan((tokens, req, res) => {
+      return [
+        '📌',
+        tokens.method(req, res),
+        tokens.url(req, res),
+        '| Status:',
+        tokens.status(req, res),
+        '| Time:',
+        tokens['response-time'](req, res),
+        'ms',
+        '| Size:',
+        tokens.res(req, res, 'content-length'),
+      ].join(' ');
+    }),
+  );
 
   /* ======== Routes ======== */
   app.use('/api/v1', createRouter(io));

@@ -8,7 +8,7 @@ const onlineUsers = new Map<string, string>();
 /* ======== Socket Initialization ======== */
 const initSocket = (io: Server): void => {
   io.on('connection', (socket: Socket) => {
-    console.log(`🔌 Socket connected: ${socket.id}`);
+    console.log(`Socket connected: ${socket.id}`);
 
     /* ======== Setup — User Online ======== */
     socket.on('setup', async (userId: string) => {

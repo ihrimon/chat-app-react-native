@@ -20,7 +20,7 @@ tempServer.close();
 
 /* ======== Create Actual HTTP Server ======== */
 const server = http.createServer(app);
-io.attach(server); // io কে actual server এ attach করো
+io.attach(server); // attach Socket.IO to the actual server
 
 /* ======== Init Socket ======== */
 initSocket(io);
