@@ -186,7 +186,7 @@
 
 Build a **simple but fully working real-time chat app** with core messaging functionality.
 
-### 🟢 Auth Module (MVP)
+### 🟢 Auth Module (MVP) (completed)
 
 #### Features:
 
@@ -194,14 +194,14 @@ Build a **simple but fully working real-time chat app** with core messaging func
 - User Login
 - JWT Authentication
 
-### 🟢 User Module (MVP)
+### 🟢 User Module (MVP) (completed)
 
 #### Features:
 
 - Basic profile (name, email)
 - User list (for chat start)
 
-### 🟢 Chat Module (MVP)
+### 🟢 Chat Module (MVP) (completed)
 
 #### Features:
 
@@ -213,7 +213,7 @@ Build a **simple but fully working real-time chat app** with core messaging func
 
 - lastMessage
 
-### 🟢 Message Module (MVP)
+### 🟢 Message Module (MVP) (completed)
 
 #### Features:
 

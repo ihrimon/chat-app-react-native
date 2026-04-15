@@ -26,7 +26,7 @@ export default function SplashScreen({ navigation }: any) {
 
     // navigate after 3 sec
     const timer = setTimeout(() => {
-      navigation.replace('Login');
+      navigation.replace('Onboarding');
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -40,13 +40,12 @@ export default function SplashScreen({ navigation }: any) {
   });
 
   return (
-    // <View className='flex-1 items-center justify-center bg-white'>
-    <View className="flex-1 bg-red-500" >
+    <View className='flex-1 items-center justify-center bg-white'>
       <Animated.View
         style={animatedStyle}
         className='items-center justify-center'
       >
-        <Ionicons name='chatbubbles-outline' size={80} color='#24786D' />
+        <Ionicons name='chatbubbles-outline' size={80} color='#24786D'/>
 
         <Text className='text-5xl font-bold mt-3 text-[#24786D]'>Talkify</Text>
       </Animated.View>
