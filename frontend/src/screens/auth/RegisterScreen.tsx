@@ -1,4 +1,3 @@
-// src/screens/auth/RegisterScreen.tsx
 import {
   View,
   Text,
@@ -30,7 +29,7 @@ export default function RegisterScreen() {
     try {
       await register({ name, email, password, confirmPassword });
       Alert.alert('Success', 'Account created successfully!');
-      navigation.replace('MainNavigator'); // or your home route
+      navigation.replace('MainNavigator'); 
     } catch (error: any) {
       Alert.alert('Registration Failed', error);
     }

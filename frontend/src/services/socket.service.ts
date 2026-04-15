@@ -1,3 +1,4 @@
+
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '../store/auth.store';
 
@@ -9,13 +10,10 @@ class SocketService {
 
     if (!token) return;
 
-    this.socket = io(
-      process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:5000',
-      {
-        auth: { token },
-        transports: ['websocket'],
-      },
-    );
+    this.socket = io(process.env.EXPO_PUBLIC_SOCKET_URL, {
+      auth: { token },
+      transports: ['websocket'],
+    });
 
     this.socket.on('connect', () => {
       console.log('✅ Socket Connected');

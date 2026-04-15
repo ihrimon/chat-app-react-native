@@ -1,4 +1,3 @@
-// src/screens/auth/LoginScreen.tsx
 import {
   View,
   Text,
@@ -28,7 +27,7 @@ export default function LoginScreen() {
     try {
       await login(email.trim().toLowerCase(), password);
       Alert.alert('Success', 'Welcome back!');
-      navigation.replace('MainNavigator'); // Main app এ চলে যাবে
+      navigation.replace('MainNavigator'); 
     } catch (error: any) {
       Alert.alert('Login Failed', error || 'Invalid email or password');
     }

@@ -1,8 +1,23 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, FontAwesome, AntDesign } from '@expo/vector-icons';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useAuthStore } from '../../store/auth.store';
+import { useNavigation } from '@react-navigation/native';
 
-export default function OnboardingScreen({ navigation }: any) {
+export default function OnboardingScreen() {
+  const navigation = useNavigation<any>();
+  const { setHasSeenOnboarding } = useAuthStore();
+
+  const handleGetStarted = () => {
+    setHasSeenOnboarding(true); // এখন থেকে আর onboarding দেখাবে না
+    navigation.navigate('Register');
+  };
+
+  const handleLogin = () => {
+    setHasSeenOnboarding(true);
+    navigation.navigate('Login');
+  };
+
   return (
     <LinearGradient
       colors={['#3A1C71', '#1F1C2C', '#000000']}
@@ -48,7 +63,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
         {/* Signup Button */}
         <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
+          onPress={handleGetStarted}
           className='bg-white py-4 rounded-full mt-8'
         >
           <Text className='text-center text-black font-semibold text-base'>
@@ -61,10 +76,7 @@ export default function OnboardingScreen({ navigation }: any) {
       <View className='items-center'>
         <Text className='text-gray-400'>
           Existing account?{' '}
-          <Text
-            onPress={() => navigation.navigate('Login')}
-            className='text-white font-semibold'
-          >
+          <Text onPress={handleLogin} className='text-white font-semibold'>
             Log in
           </Text>
         </Text>
