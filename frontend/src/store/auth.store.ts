@@ -1,9 +1,9 @@
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { User } from '../types/auth.types';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { authAPI } from '../api/auth.api';
+import { User } from '../types/auth.types';
 
 interface AuthStore {
   user: User | null;
@@ -37,31 +37,54 @@ export const useAuthStore = create<AuthStore>()(
         if (password !== confirmPassword)
           throw new Error('Passwords do not match');
 
-        const data = await authAPI.register(
-          name.trim(),
-          email.trim().toLowerCase(),
-          password,
-        );
-        await authAPI.saveToken(data.token);
+        set({ isLoading: true });
 
-        set({
-          user: data.user,
-          token: data.token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+        try {
+          const result = await authAPI.register(name, email, password); 
+
+          await authAPI.saveToken(result.token);
+
+          set({
+            user: result.user,
+            token: result.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+
+          console.log('✅ Registration successful and state updated');
+        } catch (error: any) {
+          set({ isLoading: false });
+          console.error('Registration failed:', error);
+          throw (
+            error.response?.data?.message ||
+            error.message ||
+            'Registration failed'
+          );
+        }
       },
 
       login: async (email, password) => {
-        const data = await authAPI.login(email.trim().toLowerCase(), password);
-        await authAPI.saveToken(data.token);
+        set({ isLoading: true });
 
-        set({
-          user: data.user,
-          token: data.token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+        try {
+          const result = await authAPI.login(email, password);
+
+          await authAPI.saveToken(result.token);
+
+          set({
+            user: result.user,
+            token: result.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+
+          console.log('✅ Login successful');
+        } catch (error: any) {
+          set({ isLoading: false });
+          throw (
+            error.response?.data?.message || error.message || 'Login failed'
+          );
+        }
       },
 
       logout: async () => {
@@ -70,7 +93,7 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       loadUser: async () => {
-        set({ isLoading: true }); 
+        set({ isLoading: true });
 
         try {
           const token = await SecureStore.getItemAsync('accessToken');
@@ -87,7 +110,7 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
           });
         } catch (error) {
-          console.error('LoadUser Error:', error); 
+          console.error('LoadUser Error:', error);
           await authAPI.removeToken();
           set({
             user: null,

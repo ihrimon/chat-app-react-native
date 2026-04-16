@@ -8,17 +8,29 @@ export const authAPI = {
       email,
       password,
     });
-    return response.data; // Expected: { token, user }
+
+    const { data } = response.data; 
+
+    return {
+      token: data.accessToken,
+      user: data.user,
+    };
   },
 
   login: async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
-    return response.data; // Expected: { token, user }
+
+    const { data } = response.data;
+
+    return {
+      token: data.accessToken,
+      user: data.user,
+    };
   },
 
   getCurrentUser: async () => {
     const response = await api.get('/auth/me');
-    return response.data;
+    return response.data; 
   },
 
   saveToken: async (token: string) => {

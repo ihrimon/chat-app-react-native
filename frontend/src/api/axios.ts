@@ -8,16 +8,37 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 12000,
+  timeout: 10000,
 });
 
-// Auto attach token
-api.interceptors.request.use(async (config) => {
-  const token = await SecureStore.getItemAsync('accessToken'); // We'll import later
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+// Request logging
+api.interceptors.request.use((config) => {
+  console.log(`API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+  console.log('Payload:', config.data);
   return config;
 });
+
+// Response / Error logging
+api.interceptors.response.use(
+  (response) => {
+    console.log(`API Success: ${response.status} ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    console.error('API Error Details:');
+    if (error.response) {
+      // Server responded with error status
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    } else if (error.request) {
+      // Request made but no response received 
+      console.error('No response received from server (Network / Timeout / CORS)');
+      console.error('Request was made to:', error.config?.url);
+    } else {
+      console.error('Error setting up request:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

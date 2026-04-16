@@ -20,7 +20,9 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  
   const handleRegister = async () => {
+    console.log('RegisterScreen rendered', name, email, password, confirmPassword);
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
@@ -29,7 +31,8 @@ export default function RegisterScreen() {
     try {
       await register({ name, email, password, confirmPassword });
       Alert.alert('Success', 'Account created successfully!');
-      navigation.replace('MainNavigator'); 
+
+      navigation.replace('Home'); 
     } catch (error: any) {
       Alert.alert('Registration Failed', error);
     }
