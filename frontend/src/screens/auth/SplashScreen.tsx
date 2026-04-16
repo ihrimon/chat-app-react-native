@@ -34,7 +34,7 @@ export default function SplashScreenComponent() {
   return (
     <View className='flex-1 items-center justify-center bg-[#24786D]'>
       <Animated.View style={animatedStyle} className='items-center'>
-        <Ionicons name='chatbubbles-outline' size={90} color='white' />
+        <Ionicons name='chatbubbles-outline' size={100} color='white' />
         <Text className='text-white text-5xl font-bold mt-4 tracking-widest'>
           Talkify
         </Text>
@@ -42,4 +42,4 @@ export default function SplashScreenComponent() {
       </Animated.View>
     </View>
   );
-}
+} 

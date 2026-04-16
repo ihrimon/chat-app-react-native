@@ -9,7 +9,7 @@ export default function OnboardingScreen() {
   const { setHasSeenOnboarding } = useAuthStore();
 
   const handleGetStarted = () => {
-    setHasSeenOnboarding(true); // এখন থেকে আর onboarding দেখাবে না
+    setHasSeenOnboarding(true); 
     navigation.navigate('Register');
   };
 

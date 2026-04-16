@@ -1,41 +1,37 @@
+// src/navigation/AppNavigator.tsx
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { useAuthStore } from '../store/auth.store';
-import * as SplashScreen from 'expo-splash-screen'; // ← যোগ করো
+import * as SplashScreen from 'expo-splash-screen';
+
 import SplashScreenComponent from '../screens/auth/SplashScreen';
-import AuthNavigator from './AuthNavigator';
+import AuthNavigator from './AuthNavigator'; // ← এখন AuthNavigator সবকিছু হ্যান্ডেল করবে
 import MainNavigator from './MainNavigator';
-import OnboardingScreen from '../screens/chat/OnboardingScreen';
 
 export default function AppNavigator() {
   const { isLoading, isAuthenticated, hasSeenOnboarding, loadUser } =
     useAuthStore();
 
+  
+
   useEffect(() => {
-    const initializeApp = async () => {
-      await loadUser(); 
+    loadUser();
+  }, [loadUser]);
 
-      if (!isLoading) {
-        await SplashScreen.hideAsync().catch(console.error);
-      }
-    };
-
-    initializeApp();
-  }, [loadUser, isLoading]); 
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     return <SplashScreenComponent />;
   }
 
+  console.log('isAuthenticated:', isAuthenticated, 'hasSeenOnboarding:', hasSeenOnboarding, 'isLoading:', isLoading);
   return (
     <NavigationContainer>
-      {!hasSeenOnboarding ? (
-        <OnboardingScreen />
-      ) : isAuthenticated ? (
-        <MainNavigator />
-      ) : (
-        <AuthNavigator />
-      )}
+      {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }
