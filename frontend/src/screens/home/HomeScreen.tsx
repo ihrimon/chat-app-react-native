@@ -1,5 +1,4 @@
-// src/screens/chat/HomeScreen.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,184 +6,160 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const statusData = [
-  {
-    id: '1',
-    name: 'My status',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    isOwn: true,
-  },
-  {
-    id: '2',
-    name: 'Adil',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
-  },
-  {
-    id: '3',
-    name: 'Marina',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-  },
-  {
-    id: '4',
-    name: 'Dean',
-    image: 'https://randomuser.me/api/portraits/men/45.jpg',
-  },
-  {
-    id: '5',
-    name: 'Max',
-    image: 'https://randomuser.me/api/portraits/men/67.jpg',
-  },
-];
-
-const chatData = [
-  {
-    id: '1',
-    name: 'Alex Linderson',
-    message: 'How are you today?',
-    time: '2 min ago',
-    unread: 3,
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  },
-  {
-    id: '2',
-    name: 'Team Align',
-    message: "Don't miss to attend the meeting.",
-    time: '2 min ago',
-    unread: 4,
-    avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
-    isGroup: true,
-  },
-  {
-    id: '3',
-    name: 'John Abraham',
-    message: 'Hey! Can you join the meeting?',
-    time: '2 min ago',
-    unread: 0,
-    avatar: 'https://randomuser.me/api/portraits/men/33.jpg',
-  },
-  {
-    id: '4',
-    name: 'Sabila Sayma',
-    message: 'How are you today?',
-    time: '2 min ago',
-    unread: 0,
-    avatar: 'https://randomuser.me/api/portraits/women/22.jpg',
-  },
-  {
-    id: '5',
-    name: 'John Borino',
-    message: 'Have a good day 🌸',
-    time: '2 min ago',
-    unread: 0,
-    avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
-  },
-];
+import { useAuthStore } from '../../store/auth.store';
+import { useChatStore } from '../../store/chat.store';
+import { useNavigation } from '@react-navigation/native';
+import avatar from '../../assets/avatar.png';
 
 export default function HomeScreen() {
-  const renderStatus = ({ item }: any) => (
-    <TouchableOpacity className='items-center mr-4'>
-      <View className='relative'>
+  const navigation = useNavigation<any>();
+  const { user } = useAuthStore();
+  const { chats, isLoading, fetchChats } = useChatStore();
+
+  useEffect(() => {
+    fetchChats();
+  }, []);
+
+  const renderChatItem = ({ item }: any) => {
+    const otherUser =
+      item.otherUser || item.members?.find((m: any) => m._id !== user?.id);
+
+    return (
+      <TouchableOpacity
+        className='flex-row items-center px-4 py-4 border-b border-gray-800'
+        onPress={() =>
+          navigation.navigate('Chat', { chatId: item._id, user: otherUser })
+        }
+      >
         <Image
-          source={{ uri: item.image }}
-          className='w-16 h-16 rounded-full border-2 border-[#24786D]'
+          source={{
+            uri: otherUser?.avatar || {avatar},
+          }}
+          className='w-14 h-14 rounded-full'
         />
-        {item.isOwn && (
-          <View className='absolute bottom-0 right-0 bg-[#24786D] rounded-full p-1'>
-            <Ionicons name='add' size={14} color='white' />
+
+        <View className='flex-1 ml-3'>
+          <View className='flex-row justify-between'>
+            <Text className='text-white font-semibold text-[17px]'>
+              {otherUser?.name || 'Unknown User'}
+            </Text>
+            <Text className='text-gray-400 text-xs'>
+              {item.updatedAt
+                ? new Date(item.updatedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : ''}
+            </Text>
+          </View>
+
+          <Text className='text-gray-400 text-sm mt-0.5' numberOfLines={1}>
+            {item.lastMessage?.text || 'No messages yet'}
+          </Text>
+        </View>
+
+        {item.unreadCount && item.unreadCount > 0 && (
+          <View className='bg-[#24786D] w-6 h-6 rounded-full items-center justify-center'>
+            <Text className='text-white text-xs font-bold'>
+              {item.unreadCount}
+            </Text>
           </View>
         )}
-      </View>
-      <Text className='text-white text-xs mt-1'>{item.name}</Text>
-    </TouchableOpacity>
-  );
-
-  const renderChat = ({ item }: any) => (
-    <TouchableOpacity className='flex-row items-center px-4 py-3 border-b border-gray-800'>
-      <Image source={{ uri: item.avatar }} className='w-12 h-12 rounded-full' />
-
-      <View className='flex-1 ml-3'>
-        <View className='flex-row justify-between'>
-          <Text className='text-white font-semibold text-base'>
-            {item.name}
-          </Text>
-          <Text className='text-gray-400 text-xs'>{item.time}</Text>
-        </View>
-        <Text className='text-gray-400 text-sm mt-0.5' numberOfLines={1}>
-          {item.message}
-        </Text>
-      </View>
-
-      {item.unread > 0 && (
-        <View className='bg-[#24786D] w-6 h-6 rounded-full items-center justify-center'>
-          <Text className='text-white text-xs font-bold'>{item.unread}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View className='flex-1 bg-[#0F0F0F]'>
-      <StatusBar barStyle='light-content' backgroundColor='#0F0F0F' />
+      <StatusBar barStyle='light-content' />
 
       {/* Header */}
-      <View className='flex-row items-center justify-between px-4 pt-12 pb-4 bg-[#0F0F0F]'>
-        <Text className='text-white text-2xl font-bold'>Home</Text>
+      <View className='px-4 pt-12 pb-4 bg-[#0F0F0F] flex-row justify-between items-center'>
+        <Text className='text-white text-2xl font-bold'>Talkify</Text>
         <View className='flex-row items-center gap-4'>
           <TouchableOpacity>
             <Ionicons name='search' size={24} color='white' />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Image
-              source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }}
+              source={avatar}
               className='w-9 h-9 rounded-full'
             />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Status / Stories Row */}
+      {/* Status Row (Stories) */}
       <View className='bg-[#1A1A1A] py-4'>
         <FlatList
-          data={statusData}
           horizontal
+          data={[
+            { id: 'my', name: 'My status', isOwn: true },
+            ...chats.slice(0, 5),
+          ]}
+          keyExtractor={(item) => item.id || item._id}
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={renderStatus}
           contentContainerStyle={{ paddingHorizontal: 16 }}
+          renderItem={({ item }) => (
+            <TouchableOpacity className='items-center mr-4'>
+              <Image
+                source={{ uri: 'https://via.placeholder.com/150' }}
+                className='w-16 h-16 rounded-full border-2 border-[#24786D]'
+              />
+              <Text className='text-white text-xs mt-1'>
+                {item.name || 'User'}
+              </Text>
+            </TouchableOpacity>
+          )}
         />
       </View>
 
       {/* Chat List */}
-      <FlatList
-        data={chatData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderChat}
-        className='flex-1'
-        contentContainerStyle={{ paddingBottom: 80 }}
-      />
+      {isLoading ? (
+        <View className='flex-1 justify-center items-center'>
+          <ActivityIndicator size='large' color='#24786D' />
+        </View>
+      ) : (
+        <FlatList
+          data={chats}
+          keyExtractor={(item) => item._id}
+          renderItem={renderChatItem}
+          ListEmptyComponent={
+            <View className='flex-1 justify-center items-center mt-20'>
+              <Text className='text-gray-400 text-lg'>No chats yet</Text>
+              <Text className='text-gray-500 text-sm mt-2'>
+                Start a conversation!
+              </Text>
+            </View>
+          }
+        />
+      )}
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        className='absolute bottom-20 right-6 bg-[#24786D] w-14 h-14 rounded-full items-center justify-center shadow-lg'
+        onPress={() => navigation.navigate('NewChat')} // পরে তৈরি করব
+      >
+        <Ionicons name='chatbubble-ellipses' size={28} color='white' />
+      </TouchableOpacity>
 
       {/* Bottom Navigation */}
-      <View className='flex-row justify-around items-center bg-[#1A1A1A] py-3 border-t border-gray-800 absolute bottom-0 left-0 right-0'>
+      <View className='flex-row justify-around bg-[#1A1A1A] py-3 border-t border-gray-800 absolute bottom-0 left-0 right-0'>
         <TouchableOpacity className='items-center'>
           <Ionicons name='chatbubble-ellipses' size={28} color='#24786D' />
-          <Text className='text-[#24786D] text-xs mt-1 font-medium'>
-            Message
-          </Text>
+          <Text className='text-[#24786D] text-xs mt-1'>Message</Text>
         </TouchableOpacity>
-
         <TouchableOpacity className='items-center'>
           <Ionicons name='call' size={28} color='#888' />
           <Text className='text-gray-400 text-xs mt-1'>Calls</Text>
         </TouchableOpacity>
-
         <TouchableOpacity className='items-center'>
           <Ionicons name='people' size={28} color='#888' />
           <Text className='text-gray-400 text-xs mt-1'>Contacts</Text>
         </TouchableOpacity>
-
         <TouchableOpacity className='items-center'>
           <Ionicons name='settings' size={28} color='#888' />
           <Text className='text-gray-400 text-xs mt-1'>Settings</Text>
