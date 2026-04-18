@@ -1,4 +1,3 @@
-// src/navigation/MainNavigator.tsx
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -9,7 +8,10 @@ const Stack = createNativeStackNavigator();
 
 export default function MainNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName='Home'
+    >
       <Stack.Screen name='Home' component={HomeScreen} />
       <Stack.Screen name='Chat' component={ChatScreen} />
     </Stack.Navigator>

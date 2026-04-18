@@ -32,7 +32,7 @@ export default function RegisterScreen() {
       await register({ name, email, password, confirmPassword });
       Alert.alert('Success', 'Account created successfully!');
 
-      navigation.replace('Home'); 
+      navigation.replace('MainNavigator');
     } catch (error: any) {
       Alert.alert('Registration Failed', error);
     }

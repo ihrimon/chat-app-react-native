@@ -56,6 +56,14 @@ export const loginUser = async (
   return { user, accessToken, refreshToken };
 };
 
+/* ======== Get Current User ======== */
+export const currentUser = async (userId: string): Promise<IUser> => {
+  const user = await userModel.findById(userId).select('-password');
+  
+  if (!user) throw new AppError('User not found', 404);
+  return user;
+};
+
 /* ======== Refresh Access Token ======== */
 export const refreshAccessToken = async (
   refreshToken: string,

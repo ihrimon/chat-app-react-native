@@ -13,7 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '../../store/auth.store';
 import { useChatStore } from '../../store/chat.store';
-import avatar from '../../assets/avatar.png';
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
@@ -29,13 +28,13 @@ export default function HomeScreen() {
     {
       id: 'my',
       name: 'My status',
-      image: avatar,
+      image: 'https://i.pravatar.cc/300',
       isOwn: true,
     },
     ...chats.slice(0, 6).map((chat: any) => ({
       id: chat._id,
       name: chat.otherUser?.name?.split(' ')[0] || 'User',
-      image: chat.otherUser?.avatar || {avatar},
+      image: 'https://i.pravatar.cc/300',
     })),
   ];
 
@@ -43,7 +42,7 @@ export default function HomeScreen() {
     <TouchableOpacity className='items-center mr-4'>
       <View className='relative'>
         <Image
-          source={{ uri: item.image }}
+          source={{ uri: 'https://i.pravatar.cc/300' }}
           className='w-16 h-16 rounded-full border-2 border-[#24786D]'
         />
         {item.isOwn && (
@@ -72,7 +71,7 @@ export default function HomeScreen() {
       >
         <Image
           source={{
-            uri: otherUser.avatar || avatar,
+            uri: 'https://i.pravatar.cc/300',
           }}
           className='w-14 h-14 rounded-full'
         />
@@ -124,7 +123,7 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Image
               source={{
-                uri: avatar,
+                uri:  'https://i.pravatar.cc/300',
               }}
               className='w-9 h-9 rounded-full border border-gray-700'
             />

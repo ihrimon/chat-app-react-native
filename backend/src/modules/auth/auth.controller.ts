@@ -2,6 +2,7 @@ import {
   cookieOptions,
   refreshTokenCookieOptions,
 } from '../../config/env.config';
+import { AuthRequest } from '../../types';
 import { ApiResponse } from '../../utils/api-response.utils';
 import { AppError } from '../../utils/app-error.utils';
 import catchAsync from '../../utils/catch-async.utils';
@@ -44,6 +45,13 @@ export const refreshToken = catchAsync(async (req, res) => {
   ApiResponse.success(res, 'Token refreshed successfully', {
     accessToken,
   });
+});
+
+/* ======== Get Current User ======== */
+export const getCurrentUser = catchAsync<AuthRequest>(async (req, res) => {
+  const user = await authService.currentUser(req.user!.id);
+
+  ApiResponse.success(res,  'Current user retrieved successfully', user);
 });
 
 /* ======== Logout ======== */

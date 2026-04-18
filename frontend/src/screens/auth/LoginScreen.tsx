@@ -27,7 +27,7 @@ export default function LoginScreen() {
     try {
       await login(email.trim().toLowerCase(), password);
       Alert.alert('Success', 'Welcome back!');
-      navigation.replace('Home'); 
+      navigation.replace('MainNavigator');
     } catch (error: any) {
       Alert.alert('Login Failed', error || 'Invalid email or password');
     }

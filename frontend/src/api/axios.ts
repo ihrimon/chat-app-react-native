@@ -16,9 +16,16 @@ const api = axios.create({
 });
 
 // Request logging
-api.interceptors.request.use((config) => {
-  console.log(`API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
-  console.log('Payload:', config.data);
+api.interceptors.request.use(async (config) => {
+  try {
+    const token = await SecureStore.getItemAsync('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔑 Token attached to request');
+    }
+  } catch (err) {
+    console.log('Failed to get token from SecureStore');
+  }
   return config;
 });
 

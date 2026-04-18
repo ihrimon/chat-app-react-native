@@ -37,20 +37,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   error: null,
 
   fetchChats: async () => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true });
     try {
+      console.log('📡 Fetching chats from backend...');
       const data = await chatAPI.getChats();
-      
-      set({
-        chats: data.data || data || [],
-        isLoading: false,
-      });
+      console.log('✅ Chats fetched successfully:', data);
+      set({ chats: data.data || data || [], isLoading: false });
     } catch (error: any) {
-      console.error('Failed to fetch chats:', error);
-      set({
-        error: error.response?.data?.message || 'Failed to load chats',
-        isLoading: false,
-      });
+      console.error(
+        '❌ Failed to fetch chats:',
+        error.response?.data || error.message,
+      );
+      set({ error: error.message, isLoading: false });
     }
   },
 
