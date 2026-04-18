@@ -9,13 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '../../store/auth.store';
 import { useChatStore } from '../../store/chat.store';
 import { chatAPI } from '../../api/chat.api';
+import { socketService } from '../../services/socket.service';
 
 interface Message {
   _id: string;
@@ -34,28 +34,62 @@ export default function ChatScreen() {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  // Load messages
+  // Connect Socket & Join Chat Room
+  useEffect(() => {
+    socketService.connect();
+    if (chatId) {
+      socketService.joinChat(chatId);
+    }
+
+    return () => {
+      // Cleanup when leaving screen
+      socketService.disconnect();
+    };
+  }, [chatId]);
+
+  // Load previous messages
   useEffect(() => {
     if (!chatId) return;
 
     const loadMessages = async () => {
-      setLoading(true);
       try {
         const res = await chatAPI.getMessages(chatId);
-        const loadedMessages = res.data?.data || res.data || [];
-        setMessages(loadedMessages);
-        flatListRef.current?.scrollToEnd({ animated: false });
+        const loaded = res.data?.data || res.data || [];
+        setMessages(loaded);
+        flatListRef.current?.scrollToEnd({ animated: true });
       } catch (error) {
         console.error('Failed to load messages:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     loadMessages();
+  }, [chatId]);
+
+  // Listen for new messages via Socket
+  useEffect(() => {
+    const handleNewMessage = (data: any) => {
+      if (data.chatId === chatId) {
+        setMessages((prev) => [...prev, data.message]);
+        flatListRef.current?.scrollToEnd({ animated: true });
+
+        // Update last message in chat list
+        updateLastMessage(chatId, data.message);
+      }
+    };
+
+    // Socket listener
+    const socket = socketService.getSocket();
+    if (socket) {
+      socket.on('receive_message', handleNewMessage);
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('receive_message', handleNewMessage);
+      }
+    };
   }, [chatId]);
 
   const sendMessage = async () => {
@@ -64,7 +98,6 @@ export default function ChatScreen() {
     const messageText = newMessage.trim();
     setNewMessage('');
 
-    // Optimistic Update
     const optimisticMessage: Message = {
       _id: `temp_${Date.now()}`,
       text: messageText,
@@ -76,17 +109,18 @@ export default function ChatScreen() {
     flatListRef.current?.scrollToEnd({ animated: true });
 
     try {
-      const response = await chatAPI.sendMessage(chatId, messageText);
+      await chatAPI.sendMessage(chatId, messageText);
 
-      // Update last message in chat list
+      // Send via Socket also
+      socketService.sendMessage(chatId, messageText, user.id);
+
       updateLastMessage(chatId, {
         text: messageText,
         senderId: user.id,
         createdAt: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Send message failed:', error);
-      // Remove optimistic message if failed
+      console.error('Failed to send message:', error);
       setMessages((prev) =>
         prev.filter((m) => m._id !== optimisticMessage._id),
       );
@@ -107,7 +141,7 @@ export default function ChatScreen() {
               : 'bg-[#2A2A2A] rounded-bl-none'
           }`}
         >
-          <Text className='text-white text-[16px] leading-5'>{item.text}</Text>
+          <Text className='text-white text-[16px]'>{item.text}</Text>
           <Text
             className={`text-[10px] mt-1 text-right ${isMyMessage ? 'text-white/70' : 'text-gray-400'}`}
           >
@@ -147,22 +181,16 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      {/* Messages */}
-      {loading ? (
-        <View className='flex-1 justify-center items-center'>
-          <ActivityIndicator size='large' color='#24786D' />
-        </View>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item._id}
-          renderItem={renderMessage}
-          contentContainerStyle={{ paddingVertical: 16, paddingBottom: 80 }}
-        />
-      )}
+      {/* Messages List */}
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        keyExtractor={(item) => item._id}
+        renderItem={renderMessage}
+        contentContainerStyle={{ paddingVertical: 16, paddingBottom: 80 }}
+      />
 
-      {/* Input Area */}
+      {/* Input */}
       <View className='flex-row items-center px-4 py-3 bg-[#1A1A1A] border-t border-gray-800'>
         <View className='flex-1 bg-[#2A2A2A] rounded-full px-4 flex-row items-center'>
           <TextInput
@@ -178,9 +206,7 @@ export default function ChatScreen() {
         <TouchableOpacity
           onPress={sendMessage}
           disabled={!newMessage.trim()}
-          className={`ml-3 w-11 h-11 rounded-full items-center justify-center ${
-            newMessage.trim() ? 'bg-[#24786D]' : 'bg-gray-600'
-          }`}
+          className={`ml-3 w-11 h-11 rounded-full items-center justify-center ${newMessage.trim() ? 'bg-[#24786D]' : 'bg-gray-600'}`}
         >
           <Ionicons name='send' size={22} color='white' />
         </TouchableOpacity>
