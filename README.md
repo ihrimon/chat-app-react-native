@@ -425,25 +425,4 @@ Server → Client
 {
   "chatId": "CHAT_ID",
   "text": "Hello",
-  "senderId": "USER_ID"
-}
-```
-
-### 🟢 Presence Events
-
-#### user_online
-
-Server → Clients
-
-#### user_offline
-
-Server → Clients
-
-## Recommended Stack (MERN + Realtime)
-
-Frontend : React Native
-Backend: Node.js + Express.js
-Database: MongoDB,
-Realtime: Socket.IO
-Auth: JWT
-Tools: Postman, Mongoose, Typescript
+  "senderId": "USER_I
